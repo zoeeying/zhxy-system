@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @TableName("tb_admin")
 public class Admin {
+
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
