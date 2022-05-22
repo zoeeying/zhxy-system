@@ -10,6 +10,7 @@ import com.zoe.zhxy.service.TeacherService;
 import com.zoe.zhxy.util.CreateVerifiCodeImage;
 import com.zoe.zhxy.util.JwtHelper;
 import com.zoe.zhxy.util.Result;
+import com.zoe.zhxy.util.ResultCodeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,6 +35,38 @@ public class SystemController {
 
     @Autowired
     private TeacherService teacherService;
+
+    @GetMapping("/getInfo")
+    public Result getInfoByToken(@RequestHeader("token") String token) {
+        // 验证token是否过期
+        boolean isExpiration = JwtHelper.isExpiration(token);
+        if (isExpiration) {
+            return Result.build(null, ResultCodeEnum.TOKEN_ERROR);
+        }
+        // 从token中解析出用户ID、用户类型
+        Long userId = JwtHelper.getUserId(token);
+        Integer userType = JwtHelper.getUserType(token);
+
+        Map<String, Object> map = new LinkedHashMap<>();
+        switch (userType) {
+            case 1:
+                Admin admin = adminService.getAdminById(userId);
+                map.put("userType", 1);
+                map.put("user", admin);
+                break;
+            case 2:
+                Student student = studentService.getStudentById(userId);
+                map.put("userType", 2);
+                map.put("user", student);
+                break;
+            case 3:
+                Teacher teacher = teacherService.getTeacherById(userId);
+                map.put("userType", 3);
+                map.put("user", teacher);
+                break;
+        }
+        return Result.ok(map);
+    }
 
     @PostMapping("/login")
     public Result login(@RequestBody LoginForm loginForm, HttpServletRequest request) {
@@ -60,7 +93,7 @@ public class SystemController {
                 try {
                     Admin admin = adminService.login(loginForm);
                     // admin不是null，说明在数据库中找到用户了
-                    // 然后把用户类型、用户ID转换成一个密文，以token形式向客户端返回
+                    // 然后把用户ID、用户类型转换成一个密文，以token形式向客户端返回
                     if (null != admin) {
                         map.put("token", JwtHelper.createToken(admin.getId().longValue(), 1));
                     } else {

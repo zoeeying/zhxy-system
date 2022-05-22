@@ -24,4 +24,12 @@ public class TeacherServiceImpl extends ServiceImpl<TeacherMapper, Teacher> impl
         Teacher teacher = baseMapper.selectOne(queryWrapper);
         return teacher;
     }
+
+    @Override
+    public Teacher getTeacherById(Long userId) {
+        QueryWrapper<Teacher> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("id", userId);
+        Teacher teacher = baseMapper.selectOne(queryWrapper);
+        return teacher;
+    }
 }

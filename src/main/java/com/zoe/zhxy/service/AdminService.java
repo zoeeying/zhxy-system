@@ -6,4 +6,6 @@ import com.zoe.zhxy.pojo.LoginForm;
 
 public interface AdminService extends IService<Admin> {
     Admin login(LoginForm loginForm);
+
+    Admin getAdminById(Long userId);
 }
