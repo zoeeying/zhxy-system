@@ -2,6 +2,7 @@ package com.zoe.zhxy.util;
 
 import io.jsonwebtoken.*;
 import org.springframework.util.StringUtils;
+
 import java.util.Date;
 
 public class JwtHelper {
@@ -68,6 +69,7 @@ public class JwtHelper {
 
     /**
      * 刷新Token
+     *
      * @param token
      * @return
      */
