@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.util.List;
+
 @Service("clazzServiceImpl")
 @Transactional
 public class ClazzServiceImpl extends ServiceImpl<ClazzMapper, Clazz> implements ClazzService {
@@ -28,5 +30,10 @@ public class ClazzServiceImpl extends ServiceImpl<ClazzMapper, Clazz> implements
         }
         queryWrapper.orderByDesc("id");
         return baseMapper.selectPage(page, queryWrapper);
+    }
+
+    @Override
+    public List<Clazz> getClazzs() {
+        return baseMapper.selectList(null);
     }
 }

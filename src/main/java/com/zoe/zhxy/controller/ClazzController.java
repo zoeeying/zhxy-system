@@ -3,6 +3,7 @@ package com.zoe.zhxy.controller;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zoe.zhxy.pojo.Clazz;
+import com.zoe.zhxy.pojo.Grade;
 import com.zoe.zhxy.service.ClazzService;
 import com.zoe.zhxy.util.Result;
 import io.swagger.annotations.Api;
@@ -46,5 +47,12 @@ public class ClazzController {
         Page<Clazz> page = new Page<>(current, pageSize);
         IPage<Clazz> iPage = clazzService.getClazzsByOpr(page, clazz);
         return Result.ok(iPage);
+    }
+
+    @ApiOperation("查询全部Clazz")
+    @GetMapping("/getClazzs")
+    public Result getClazzs() {
+        List<Clazz> clazzs = clazzService.getClazzs();
+        return Result.ok(clazzs);
     }
 }
