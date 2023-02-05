@@ -23,7 +23,7 @@ public class GradeController {
 
     @ApiOperation("删除Grade")
     @DeleteMapping("/deleteGrade")
-    public Result deleteGrade(@ApiParam("要删除的Grade ID集合") @RequestBody List<Integer> ids) {
+    public Result deleteGrade(@ApiParam("要删除的Grade的ID集合") @RequestBody List<Integer> ids) {
         gradeService.removeByIds(ids);
         return Result.ok();
     }
@@ -41,7 +41,7 @@ public class GradeController {
             @ApiParam("当前页") @PathVariable("current") Integer current,
             @ApiParam("每页条数") @PathVariable("pageSize") Integer pageSize,
             // 省略了@RequestParam("gradeName")，该注解默认required是true，省略该注解，gradeName可不传
-            @ApiParam("模糊匹配名称") String gradeName
+            @ApiParam("模糊匹配条件") String gradeName
     ) {
         // 分页带条件查询
         Page<Grade> page = new Page<>(current, pageSize);
