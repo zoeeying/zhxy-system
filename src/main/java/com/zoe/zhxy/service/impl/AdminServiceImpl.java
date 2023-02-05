@@ -1,6 +1,8 @@
 package com.zoe.zhxy.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zoe.zhxy.mapper.AdminMapper;
 import com.zoe.zhxy.pojo.Admin;
@@ -9,6 +11,7 @@ import com.zoe.zhxy.service.AdminService;
 import com.zoe.zhxy.util.MD5;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 /**
  * ServiceImpl实现了IService
@@ -38,5 +41,15 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
         queryWrapper.eq("id", userId);
         Admin admin = baseMapper.selectOne(queryWrapper);
         return admin;
+    }
+
+    @Override
+    public IPage<Admin> getAdminsByOpr(Page<Admin> page, String adminName) {
+        QueryWrapper<Admin> queryWrapper = new QueryWrapper<>();
+        if (!StringUtils.isEmpty(adminName)) {
+            queryWrapper.like("name", adminName);
+        }
+        queryWrapper.orderByDesc("id");
+        return baseMapper.selectPage(page, queryWrapper);
     }
 }
