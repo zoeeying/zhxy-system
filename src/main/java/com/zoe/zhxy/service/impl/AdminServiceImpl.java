@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * ServiceImpl实现了IService
  * 注解@Transactional表示事务控制？？？
- * "adminServiceImpl"可以作为AdminServiceImpl实现类的ID
+ * adminServiceImpl是AdminServiceImpl实现类在容器中的ID
  */
 @Service("adminServiceImpl")
 @Transactional

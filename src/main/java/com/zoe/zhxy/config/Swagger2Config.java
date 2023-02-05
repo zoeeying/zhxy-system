@@ -65,7 +65,6 @@ public class Swagger2Config {
                 //.paths(Predicates.not(PathSelectors.regex("/error.*")))
                 .build()
                 .globalOperationParameters(pars);
-
     }
 
 
@@ -88,6 +87,4 @@ public class Swagger2Config {
                 .contact(new Contact("zoe", "https://github.com/zoeeying", "zoeeying@gmail.com"))
                 .build();
     }
-
-
 }
