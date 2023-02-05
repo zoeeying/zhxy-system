@@ -11,17 +11,22 @@ import com.zoe.zhxy.util.CreateVerifiCodeImage;
 import com.zoe.zhxy.util.JwtHelper;
 import com.zoe.zhxy.util.Result;
 import com.zoe.zhxy.util.ResultCodeEnum;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/sms/system")
@@ -35,6 +40,30 @@ public class SystemController {
 
     @Autowired
     private TeacherService teacherService;
+
+    @ApiOperation("上传头像图片")
+    @PostMapping("/headerImgUpload")
+    public Result headerImgUpload(
+            @ApiParam("头像图片") @RequestPart("multipartFile") MultipartFile multipartFile,
+            HttpServletRequest request
+    ) {
+        String uuid = UUID.randomUUID().toString().replace("-", "").toLowerCase();
+        String originalFilename = multipartFile.getOriginalFilename();
+        String newFilename = uuid.concat(originalFilename.substring(originalFilename.lastIndexOf(".")));
+
+        // 一般会将图片保存到第三方或者独立的图片服务器上
+        String portraitPath = "C:/Zoe/Projects/individual/zhxy/target/classes/public/upload/".concat(newFilename);
+        try {
+            multipartFile.transferTo(new File(portraitPath));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // 响应图片路径
+        String path = "upload/".concat(newFilename);
+        return Result.ok(path);
+    }
+
 
     @GetMapping("/getInfo")
     public Result getInfoByToken(@RequestHeader("token") String token) {
