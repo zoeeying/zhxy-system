@@ -36,8 +36,8 @@ public class AdminController {
     @ApiOperation("新增或修改Admin")
     @PostMapping("/saveOrUpdateAdmin")
     public Result saveOrUpdateAdmin(@ApiParam("Admin对象") @RequestBody Admin admin) {
-        Integer id = admin.getId();
         // 新增的Admin，需要对密码进行加密
+        Integer id = admin.getId();
         if (null == id || 0 == id) {
             admin.setPassword(MD5.encrypt(admin.getPassword()));
         }
