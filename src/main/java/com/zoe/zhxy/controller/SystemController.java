@@ -1,5 +1,6 @@
 package com.zoe.zhxy.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zoe.zhxy.pojo.Admin;
 import com.zoe.zhxy.pojo.LoginForm;
 import com.zoe.zhxy.pojo.Student;
@@ -7,10 +8,8 @@ import com.zoe.zhxy.pojo.Teacher;
 import com.zoe.zhxy.service.AdminService;
 import com.zoe.zhxy.service.StudentService;
 import com.zoe.zhxy.service.TeacherService;
-import com.zoe.zhxy.util.CreateVerifiCodeImage;
-import com.zoe.zhxy.util.JwtHelper;
-import com.zoe.zhxy.util.Result;
-import com.zoe.zhxy.util.ResultCodeEnum;
+import com.zoe.zhxy.util.*;
+import io.jsonwebtoken.Jwt;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +39,68 @@ public class SystemController {
 
     @Autowired
     private TeacherService teacherService;
+
+    @ApiOperation("修改密码")
+    @PostMapping("/updatePwd/{oldPwd}/{newPwd}")
+    public Result updatePwd(
+            @ApiParam("请求头中的token") @RequestHeader("token") String token,
+            @ApiParam("旧密码") @PathVariable("oldPwd") String oldPwd,
+            @ApiParam("新密码") @PathVariable("newPwd") String newPwd
+    ) {
+        boolean expiration = JwtHelper.isExpiration(token);
+        if (expiration) {
+            return Result.fail().message("token失效，请重新登录");
+        }
+
+        oldPwd = MD5.encrypt(oldPwd);
+        newPwd = MD5.encrypt(newPwd);
+
+        // 从token中获取用户ID和用户类型
+        Long userId = JwtHelper.getUserId(token);
+        Integer userType = JwtHelper.getUserType(token);
+        if (userId == null || userType == null) {
+            return Result.fail().message("token信息有误！");
+        }
+        switch (userType) {
+            case 1:
+                QueryWrapper<Admin> queryWrapperAdmin = new QueryWrapper<>();
+                queryWrapperAdmin.eq("id", userId.intValue());
+                queryWrapperAdmin.eq("password", oldPwd);
+                Admin admin = adminService.getOne(queryWrapperAdmin);
+                if (admin != null) {
+                    admin.setPassword(newPwd);
+                    adminService.saveOrUpdate(admin);
+                } else {
+                    return Result.fail().message("原密码有误！");
+                }
+                break;
+            case 2:
+                QueryWrapper<Student> queryWrapperStudent = new QueryWrapper<>();
+                queryWrapperStudent.eq("id", userId.intValue());
+                queryWrapperStudent.eq("password", oldPwd);
+                Student student = studentService.getOne(queryWrapperStudent);
+                if (student != null) {
+                    student.setPassword(newPwd);
+                    studentService.saveOrUpdate(student);
+                } else {
+                    return Result.fail().message("原密码有误！");
+                }
+                break;
+            case 3:
+                QueryWrapper<Teacher> queryWrapperTeacher = new QueryWrapper<>();
+                queryWrapperTeacher.eq("id", userId.intValue());
+                queryWrapperTeacher.eq("password", oldPwd);
+                Teacher teacher = teacherService.getOne(queryWrapperTeacher);
+                if (teacher != null) {
+                    teacher.setPassword(newPwd);
+                    teacherService.saveOrUpdate(teacher);
+                } else {
+                    return Result.fail().message("原密码有误！");
+                }
+                break;
+        }
+        return Result.ok();
+    }
 
     @ApiOperation("上传头像图片")
     @PostMapping("/headerImgUpload")

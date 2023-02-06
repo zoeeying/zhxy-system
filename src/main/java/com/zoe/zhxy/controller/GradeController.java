@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Api(tags = "Grade控制器")
 @RestController
 @RequestMapping("/sms/gradeController")
 public class GradeController {

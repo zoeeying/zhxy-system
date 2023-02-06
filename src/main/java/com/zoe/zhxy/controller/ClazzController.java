@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Api(tags = "Clazz控制器")
 @RestController
 @RequestMapping("/sms/clazzController")
 public class ClazzController {
